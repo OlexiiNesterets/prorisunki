@@ -6,7 +6,7 @@
         document.querySelector(selector2).classList.toggle('hidden');
     };
 
-    document.querySelector('.show-time-btn').addEventListener('touchstart', function() {
+    const handleClick = () => {
         const date = new Date();
 
         document.querySelector('.hours').textContent = date.getHours();
@@ -14,5 +14,8 @@
         document.querySelector('.seconds').textContent = `${date.getSeconds()}.${date.getMilliseconds()}`;
 
         switchBetween('.show-time-btn', '.time-info');
-    });
+    }
+
+    document.querySelector('.show-time-btn').addEventListener('touchstart', handleClick);
+    document.querySelector('.show-time-btn').addEventListener('click', handleClick);
 })();
