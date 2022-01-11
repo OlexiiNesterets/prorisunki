@@ -29,7 +29,12 @@ body {
     height: 100%;
     width: 100%;
     font-size: 4vw;
+}
 
+@media screen and (max-width: 576px) {
+    .time-info {
+        font-size: 6vw;
+    } 
 }
 
 .time-column {
