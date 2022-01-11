@@ -6,7 +6,7 @@
         document.querySelector(selector2).classList.toggle('hidden');
     };
 
-    document.querySelector('.show-time-btn').addEventListener('click', function() {
+    document.querySelector('.show-time-btn').addEventListener('focus', function() {
         const date = new Date();
 
         document.querySelector('.hours').textContent = date.getHours();
