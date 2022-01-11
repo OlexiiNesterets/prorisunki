@@ -68,6 +68,13 @@ body {
     display: none;
 }
 
+.unselectable {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 
 @media screen and (max-width: 576px) {
     .time-info {
