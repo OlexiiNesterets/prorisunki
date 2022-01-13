@@ -17,5 +17,5 @@
     }
 
     document.querySelector('.show-time-btn').addEventListener('touchstart', handleClick);
-    document.querySelector('.show-time-btn').addEventListener('click', handleClick);
+    document.querySelector('.show-time-btn').addEventListener('mousedown', handleClick);
 })();
