@@ -15,8 +15,9 @@
     const socket = new WebSocket(`wss://damp-basin-24026.herokuapp.com/`);
     // const socket = new WebSocket(`ws://localhost:5000/`);
 
-
-
+    socket.addEventListener('open', () => {
+        document.querySelector('.pending').classList.add('hidden');
+    });
 
     const switchBetween = (selector1, selector2) => {
         document.querySelector(selector1).classList.toggle('hidden');
@@ -64,6 +65,7 @@
             document.querySelector('.list').append(...list);
         });
 
+        // socket.
         socket.send(JSON.stringify({ id, time }));
 
         switchBetween('.show-time-btn', '.time-info');
