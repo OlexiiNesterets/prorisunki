@@ -1,6 +1,23 @@
 'use strict';
 
 (function () {
+
+    const makeId = (length, acc = '') => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const getRandomNumberFrom = (length) => () => Math.floor(Math.random() * length);
+        const getRandomFromCharsLength = getRandomNumberFrom(characters.length);
+        const id = acc + characters.charAt(getRandomFromCharsLength());
+        return (id.length === length) ? id : makeId(length, id);
+    }
+
+    const id = makeId(64);
+
+    const socket = new WebSocket(`wss://damp-basin-24026.herokuapp.com/`);
+    // const socket = new WebSocket(`ws://localhost:5000/`);
+
+
+
+
     const switchBetween = (selector1, selector2) => {
         document.querySelector(selector1).classList.toggle('hidden');
         document.querySelector(selector2).classList.toggle('hidden');
@@ -28,22 +45,6 @@
 
         const time = new Date();
 
-        const makeId = (length, acc = '') => {
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            const getRandomNumberFrom = (length) => () => Math.floor(Math.random() * length);
-            const getRandomFromCharsLength = getRandomNumberFrom(characters.length);
-            const id = acc + characters.charAt(getRandomFromCharsLength());
-            return (id.length === length) ? id : makeId(length, id);
-        }
-
-        const id = makeId(64);
-
-        const socket = new WebSocket(`wss://damp-basin-24026.herokuapp.com/`);
-
-        socket.addEventListener('open', function () {
-            socket.send(JSON.stringify({ id, time }));
-        });
-
         socket.addEventListener('message', function (event) {
 
             let dataArr = JSON.parse(event.data);
@@ -62,6 +63,8 @@
             document.querySelector('.list').innerHTML = '';
             document.querySelector('.list').append(...list);
         });
+
+        socket.send(JSON.stringify({ id, time }));
 
         switchBetween('.show-time-btn', '.time-info');
     }
