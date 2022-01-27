@@ -50,15 +50,14 @@
 
     const pipe = (val) => (...fns) => fns.reduce((acc, fn) => fn(acc), val);
     const callMethod = (methodName) => (val) => val[methodName]();
-    const addLeadingZero = (val) => val.length < 2 ? `0${val}` : val;
-    const addTrailingZero = (val) => val.length < 3 ? addTrailingZero(`${val}0`) : val;
+    const addLeadingZero = (length) => (val) => val.length < length ? `0${val}` : val;
 
     const getTimeRowHtml = (date) => {
         const datePipe = pipe(date);
-        const hours = datePipe(callMethod('getHours'), callMethod('toString'), addLeadingZero);
-        const minutes = datePipe(callMethod('getMinutes'), callMethod('toString'), addLeadingZero);
-        const seconds = datePipe(callMethod('getSeconds'), callMethod('toString'), addLeadingZero);
-        const milliseconds = datePipe(callMethod('getMilliseconds'), callMethod('toString'), addTrailingZero);
+        const hours = datePipe(callMethod('getHours'), callMethod('toString'), addLeadingZero(2));
+        const minutes = datePipe(callMethod('getMinutes'), callMethod('toString'), addLeadingZero(2));
+        const seconds = datePipe(callMethod('getSeconds'), callMethod('toString'), addLeadingZero(2));
+        const milliseconds = datePipe(callMethod('getMilliseconds'), callMethod('toString'), addLeadingZero(3));
         return `
             <span class="time">
                 ${hours}<span class="colon">:</span>${minutes}<span class="colon">:</span>${seconds}<span class="dot">.</span>${milliseconds}
