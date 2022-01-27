@@ -2,6 +2,8 @@
 
 (function () {
 
+    const pendingScreen = document.querySelector('.pending');
+
     const makeId = (length, acc = '') => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         const getRandomNumberFrom = (length) => () => Math.floor(Math.random() * length);
@@ -12,12 +14,41 @@
 
     const id = makeId(64);
 
-    const socket = new WebSocket(`wss://damp-basin-24026.herokuapp.com/`);
-    // const socket = new WebSocket(`ws://localhost:5000/`);
+    let socket;
 
-    socket.addEventListener('open', () => {
-        document.querySelector('.pending').classList.add('hidden');
-    });
+    const connect = () => {
+        pendingScreen.classList.remove('hidden');
+        const socket = new WebSocket(`wss://damp-basin-24026.herokuapp.com/`);
+        // socket = new WebSocket(`ws://localhost:5000/`);
+
+        socket.addEventListener('open', () => {
+            pendingScreen.classList.add('hidden');
+        });
+
+        socket.addEventListener('message', function (event) {
+            let dataArr = JSON.parse(event.data);
+            const list = dataArr.reduce((acc, elem, i) => {
+                const div = document.createElement('div');
+                div.classList.add('time-row');
+                div.innerHTML = `<span class="number-sign">№</span><span>${i + 1}</span> <span class="delimiter"></span> ${getTimeRowHtml(new Date(elem.time))}`;
+                if (elem.id === id) {
+                    div.classList.add('highlighted');
+                }
+                acc.push(div);
+                return acc;
+            }, []);
+
+            document.querySelector('.list').innerHTML = '';
+            document.querySelector('.list').append(...list);
+        });
+
+        socket.addEventListener('close', () => {
+            console.log('in close');
+            connect();
+        });
+    };
+
+    connect();
 
     const switchBetween = (selector1, selector2) => {
         document.querySelector(selector1).classList.toggle('hidden');
@@ -46,26 +77,6 @@
 
         const time = new Date();
 
-        socket.addEventListener('message', function (event) {
-
-            let dataArr = JSON.parse(event.data);
-
-            const list = dataArr.reduce((acc, elem, i) => {
-                const div = document.createElement('div');
-                div.classList.add('time-row');
-                div.innerHTML = `<span class="number-sign">№</span><span>${i + 1}</span> <span class="delimiter"></span> ${getTimeRowHtml(new Date(elem.time))}`;
-                if (elem.id === id) {
-                    div.classList.add('highlighted');
-                }
-                acc.push(div);
-                return acc;
-            }, []);
-
-            document.querySelector('.list').innerHTML = '';
-            document.querySelector('.list').append(...list);
-        });
-
-        // socket.
         socket.send(JSON.stringify({ id, time }));
 
         switchBetween('.show-time-btn', '.time-info');
