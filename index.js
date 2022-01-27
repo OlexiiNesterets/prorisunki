@@ -50,7 +50,9 @@
 
     const pipe = (val) => (...fns) => fns.reduce((acc, fn) => fn(acc), val);
     const callMethod = (methodName) => (val) => val[methodName]();
-    const addLeadingZero = (length) => (val) => val.length < length ? `0${val}` : val;
+    const addLeadingZero = (length) => function addZero(val) {
+        return val.length < length ? addZero(`0${val}`) : val;
+    };
 
     const getTimeRowHtml = (date) => {
         const datePipe = pipe(date);
