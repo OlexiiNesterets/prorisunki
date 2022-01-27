@@ -3,6 +3,7 @@
 (function () {
 
     const pendingScreen = document.querySelector('.pending');
+    const listContainer = document.querySelector('.list');
 
     const makeId = (length, acc = '') => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -17,12 +18,21 @@
     let socket;
 
     const connect = () => {
+
+        let i = 0;
+        let intervalId;
+
         pendingScreen.classList.remove('hidden');
         socket = new WebSocket(`wss://damp-basin-24026.herokuapp.com/`);
         // socket = new WebSocket(`ws://localhost:5000/`);
 
+        setInterval(() => {
+            socket.send(JSON.stringify({ ping: true }));
+        }, 30000);
+
         socket.addEventListener('open', () => {
             pendingScreen.classList.add('hidden');
+            intervalId = setInterval(() => console.log(++i), 1000);
         });
 
         socket.addEventListener('message', function (event) {
@@ -38,12 +48,14 @@
                 return acc;
             }, []);
 
-            document.querySelector('.list').innerHTML = '';
-            document.querySelector('.list').append(...list);
+            listContainer.innerHTML = '';
+            listContainer.append(...list);
+            pendingScreen.classList.add('hidden');
         });
 
-        socket.addEventListener('close', () => {
+        socket.addEventListener('close', function () {
             console.log('in close');
+            clearInterval(intervalId);
             connect();
         });
     };
@@ -74,13 +86,11 @@
     }
 
     const handleClick = () => {
-
         const time = new Date();
-
+        pendingScreen.classList.remove('hidden');
         socket.send(JSON.stringify({ id, time }));
-
         switchBetween('.show-time-btn', '.time-info');
-    }
+    };
 
     document.querySelector('.show-time-btn').addEventListener('touchstart', handleClick);
     document.querySelector('.show-time-btn').addEventListener('mousedown', handleClick);
