@@ -15,52 +15,33 @@
 
     const id = makeId(64);
 
-    let socket;
+    const socket = new WebSocket(`wss://damp-basin-24026.herokuapp.com/`);
+    // const socket = new WebSocket(`ws://localhost:5000/`);
 
-    const connect = () => {
-
-        let i = 0;
-        let intervalId;
-
-        pendingScreen.classList.remove('hidden');
-        socket = new WebSocket(`wss://damp-basin-24026.herokuapp.com/`);
-        // socket = new WebSocket(`ws://localhost:5000/`);
-
+    socket.addEventListener('open', () => {
+        pendingScreen.classList.add('hidden');
         setInterval(() => {
             socket.send(JSON.stringify({ ping: true }));
         }, 30000);
+    });
 
-        socket.addEventListener('open', () => {
-            pendingScreen.classList.add('hidden');
-            intervalId = setInterval(() => console.log(++i), 1000);
-        });
+    socket.addEventListener('message', function (event) {
+        let dataArr = JSON.parse(event.data);
+        const list = dataArr.reduce((acc, elem, i) => {
+            const div = document.createElement('div');
+            div.classList.add('time-row');
+            div.innerHTML = `<span class="number-sign">№</span><span>${i + 1}</span> <span class="delimiter"></span> ${getTimeRowHtml(new Date(elem.time))}`;
+            if (elem.id === id) {
+                div.classList.add('highlighted');
+            }
+            acc.push(div);
+            return acc;
+        }, []);
 
-        socket.addEventListener('message', function (event) {
-            let dataArr = JSON.parse(event.data);
-            const list = dataArr.reduce((acc, elem, i) => {
-                const div = document.createElement('div');
-                div.classList.add('time-row');
-                div.innerHTML = `<span class="number-sign">№</span><span>${i + 1}</span> <span class="delimiter"></span> ${getTimeRowHtml(new Date(elem.time))}`;
-                if (elem.id === id) {
-                    div.classList.add('highlighted');
-                }
-                acc.push(div);
-                return acc;
-            }, []);
-
-            listContainer.innerHTML = '';
-            listContainer.append(...list);
-            pendingScreen.classList.add('hidden');
-        });
-
-        socket.addEventListener('close', function () {
-            console.log('in close');
-            clearInterval(intervalId);
-            connect();
-        });
-    };
-
-    connect();
+        listContainer.innerHTML = '';
+        listContainer.append(...list);
+        pendingScreen.classList.add('hidden');
+    });
 
     const switchBetween = (selector1, selector2) => {
         document.querySelector(selector1).classList.toggle('hidden');
