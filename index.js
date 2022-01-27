@@ -18,7 +18,7 @@
 
     const connect = () => {
         pendingScreen.classList.remove('hidden');
-        const socket = new WebSocket(`wss://damp-basin-24026.herokuapp.com/`);
+        socket = new WebSocket(`wss://damp-basin-24026.herokuapp.com/`);
         // socket = new WebSocket(`ws://localhost:5000/`);
 
         socket.addEventListener('open', () => {
