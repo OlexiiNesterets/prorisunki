@@ -68,9 +68,8 @@
     }
 
     const handleClick = () => {
-        const time = new Date();
         pendingScreen.classList.remove('hidden');
-        socket.send(JSON.stringify({ id, time }));
+        socket.send(JSON.stringify({ id }));
         switchBetween('.show-time-btn', '.time-info');
     };
 
