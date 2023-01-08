@@ -15,7 +15,7 @@
 
     const id = makeId(64);
 
-    const socket = new WebSocket(`wss://damp-basin-24026.herokuapp.com/`);
+    const socket = new WebSocket(`wss://languid-global-soarer.glitch.me/`);
     // const socket = new WebSocket(`ws://localhost:5000/`);
 
     socket.addEventListener('open', () => {
